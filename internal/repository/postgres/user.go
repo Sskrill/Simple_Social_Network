@@ -12,6 +12,7 @@ type User struct {
 
 func NewUserDB(db *sql.DB) *User { return &User{Db: db} }
 func (u *User) CreateUser(ctx context.Context, user domainU.User) error {
+
 	_, err := u.Db.Exec("INSERT INTO users (username,password) VALUES ($1,$2)", user.UserName, user.Password)
 	return err
 }

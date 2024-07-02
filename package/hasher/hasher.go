@@ -1,6 +1,9 @@
 package hasher
 
-import "crypto/sha256"
+import (
+	"crypto/sha256"
+	"fmt"
+)
 
 type HasherSHA struct {
 	salt string
@@ -15,5 +18,5 @@ func (h *HasherSHA) Hash(str string) (string, error) {
 		return "", err
 	}
 
-	return string(hash.Sum([]byte(h.salt))), nil
+	return fmt.Sprintf("%x", hash.Sum([]byte(h.salt))), nil
 }

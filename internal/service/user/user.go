@@ -46,7 +46,7 @@ func isLatin(s string) bool {
 	regex := regexp.MustCompile("^[a-zA-Z]+$")
 	return regex.MatchString(s)
 }
-func ValidateArticle(input string) bool {
+func validateArticle(input string) bool {
 
 	regex := regexp.MustCompile(`^[a-zA-Z\s]+$`)
 	return regex.MatchString(input)
@@ -55,7 +55,10 @@ func ValidateArticle(input string) bool {
 func NewServiceUser(tRepo TokenRepo, uRepo UserRepo, hsh Hasher, aRepo ArticleRepo, secret []byte) *ServiceUser {
 	return &ServiceUser{TRepo: tRepo, URepo: uRepo, Hsh: hsh, ARepo: aRepo, Secret: secret}
 }
-func (sU *ServiceUser) FindArticlesByToken(ctx context.Context, rToken string, article domainA.Article) error {
+func (sU *ServiceUser) CraeteArticlesByToken(ctx context.Context, rToken string, article domainA.Article) error {
+	if ok := validateArticle(article.Content); !ok {
+		return errors.New("invalid content or title")
+	}
 	userId, err := sU.TRepo.GetUserIdByToken(ctx, rToken)
 	if err != nil {
 		return err
@@ -97,6 +100,7 @@ func (sU *ServiceUser) SignUp(ctx context.Context, param domainU.AuthParam) erro
 	}
 	password, err := sU.Hsh.Hash(param.Password)
 	if err != nil {
+
 		return err
 	}
 	user := domainU.User{UserName: param.UserName, Password: password}

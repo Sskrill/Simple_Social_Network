@@ -9,8 +9,8 @@ func init() {
 }
 
 type Article struct {
-	Title   string `json:"Title" validate:"required,gte=3,lte=100"`
-	Content string `json:"Content" validate:"required"`
+	Title   string `json:"title" validate:"required,gte=3,lte=100"`
+	Content string `json:"content" validate:"required"`
 }
 
 func (a Article) IsValid() error { return validate.Struct(a) }
