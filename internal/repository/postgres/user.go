@@ -23,7 +23,7 @@ func (u *User) GetUser(ctx context.Context, password, userName string) (domainU.
 	return user, err
 }
 func (u *User) GetAllUsers(ctx context.Context) ([]domainU.UserArticles, error) {
-	rows, err := u.Db.Query("SELECT user_name FROM users")
+	rows, err := u.Db.Query("SELECT username FROM users")
 	if err != nil {
 		return nil, err
 	}

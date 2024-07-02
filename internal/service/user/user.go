@@ -72,18 +72,21 @@ func (sU *ServiceUser) CraeteArticlesByToken(ctx context.Context, rToken string,
 	err = sU.ARepo.CreateArticle(ctx, article, name)
 	return err
 }
-func (sU *ServiceUser) GetAllArticles(ctx context.Context) ([]domainU.UserArticles /* -Возможно нужно ставить указатель */, error) {
+func (sU *ServiceUser) GetAllArticles(ctx context.Context) (*[]domainU.UserArticles /* -Возможно нужно ставить указатель */, error) {
 	userArticels, err := sU.URepo.GetAllUsers(ctx)
+
 	if err != nil {
+
 		return nil, err
 	}
-	for _, user := range userArticels {
-		user.Articles, err = sU.ARepo.GetAllArticlesByName(ctx, user.UserName)
+	for i, user := range userArticels {
+		userArticels[i].Articles, err = sU.ARepo.GetAllArticlesByName(ctx, user.UserName)
 		if err != nil {
+
 			return nil, err
 		}
 	}
-	return userArticels, err // -Возможно нужно ставить указатель
+	return &userArticels, err // -Возможно нужно ставить указатель
 }
 func (sU *ServiceUser) SignIn(ctx context.Context, param domainU.AuthParam) (string, string, error) {
 	password, err := sU.Hsh.Hash(param.Password)

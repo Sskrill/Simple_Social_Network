@@ -12,7 +12,7 @@ type UserService interface {
 	SignIn(ctx context.Context, param domainU.AuthParam) (string, string, error)
 	SignUp(ctx context.Context, param domainU.AuthParam) error
 	ParseToken(ctx context.Context, token string) (int64, error)
-	GetAllArticles(ctx context.Context) ([]domainU.UserArticles /* -Возможно нужно ставить указатель */, error)
+	GetAllArticles(ctx context.Context) (*[]domainU.UserArticles /* -Возможно нужно ставить указатель */, error)
 	CraeteArticlesByToken(ctx context.Context, rToken string, article domainA.Article) error
 	RefreshTokens(ctx context.Context, refreshToken string) (string, string, error)
 }
@@ -35,7 +35,7 @@ func (h *Handler) CreateRouter() *mux.Router {
 	{
 		articles.Use(h.authMiddleware)
 		articles.HandleFunc("", h.createArticle).Methods(http.MethodPost)
-		//articles.HandleFunc("/all",h.)
+		articles.HandleFunc("/all", h.getAllArticles).Methods(http.MethodGet)
 	}
 	return router
 }

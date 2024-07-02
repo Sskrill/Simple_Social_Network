@@ -23,8 +23,8 @@ type AuthParam struct {
 }
 
 type UserArticles struct {
-	Articles []domainA.Article `json:"articles"`
 	UserName string            `json:"username"`
+	Articles []domainA.Article `json:"articles"`
 }
 
 func (aP AuthParam) IsValid() error { return validate.Struct(aP) }

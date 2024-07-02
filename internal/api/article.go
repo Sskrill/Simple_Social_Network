@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	domainA "github.com/Sskrill/TaskGyberNaty/internal/domain/article"
 	domainErr "github.com/Sskrill/TaskGyberNaty/internal/domain/errors"
 	"io/ioutil"
@@ -52,4 +53,25 @@ func (h *Handler) createArticle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+func (h *Handler) getAllArticles(w http.ResponseWriter, r *http.Request) {
+	userArticles, err := h.userS.GetAllArticles(r.Context())
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		resp, _ := json.Marshal(domainErr.ErrorResponse{Message: err.Error()})
+		fmt.Println(2)
+		w.Write(resp)
+		return
+	}
+	resp, err := json.Marshal(userArticles)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		resp, _ := json.Marshal(domainErr.ErrorResponse{Message: err.Error()})
+		fmt.Println(3)
+		w.Write(resp)
+		return
+	}
+	w.Header().Add("Content-Type", "application/json")
+	w.Write(resp)
+	return
 }
