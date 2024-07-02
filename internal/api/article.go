@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	domainA "github.com/Sskrill/TaskGyberNaty/internal/domain/article"
 	domainErr "github.com/Sskrill/TaskGyberNaty/internal/domain/errors"
 	"io/ioutil"
@@ -10,11 +9,12 @@ import (
 )
 
 func (h *Handler) createArticle(w http.ResponseWriter, r *http.Request) {
+
 	cookieRToken, err := r.Cookie("refresh-token")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		resp, _ := json.Marshal(domainErr.ErrorResponse{Message: err.Error()})
-		fmt.Println(1)
+
 		w.Write(resp)
 		return
 	}
@@ -23,7 +23,7 @@ func (h *Handler) createArticle(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		resp, _ := json.Marshal(domainErr.ErrorResponse{Message: err.Error()})
-		fmt.Println(2)
+
 		w.Write(resp)
 		return
 	}
@@ -31,23 +31,25 @@ func (h *Handler) createArticle(w http.ResponseWriter, r *http.Request) {
 	if err = json.Unmarshal(resp, &article); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		resp, _ := json.Marshal(domainErr.ErrorResponse{Message: err.Error()})
-		fmt.Println(3)
+
 		w.Write(resp)
 		return
 	}
 	if err = article.IsValid(); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		resp, _ := json.Marshal(domainErr.ErrorResponse{Message: err.Error()})
-		fmt.Println(4)
+
 		w.Write(resp)
 		return
 	}
+
 	if err = h.userS.CraeteArticlesByToken(r.Context(), cookieRToken.Value, article); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		resp, _ := json.Marshal(domainErr.ErrorResponse{Message: err.Error()})
-		fmt.Println(5)
+
 		w.Write(resp)
 		return
 	}
+
 	w.WriteHeader(http.StatusOK)
 }

@@ -27,12 +27,17 @@ func (t *Token) GetToken(ctx context.Context, token string) (domain.RefreshToken
 		return refreshToken, err
 	}
 
-	_, err = t.Db.Exec("DELETE FROM refreshtokens WHERE user_id=$1", refreshToken.UserID)
+	err = t.DeleteTokenByUserId(ctx, refreshToken.UserID)
 
 	return refreshToken, err
 }
 func (t *Token) GetUserIdByToken(ctx context.Context, token string) (int, error) {
 	var id int
+	token = strings.ReplaceAll(token, "'", "")
 	err := t.Db.QueryRow("SELECT user_id FROM refreshtokens WHERE token=$1", token).Scan(&id)
 	return id, err
+}
+func (t *Token) DeleteTokenByUserId(ctx context.Context, userId int) error {
+	_, err := t.Db.Exec("DELETE FROM refreshtokens WHERE user_id=$1", userId)
+	return err
 }

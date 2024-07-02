@@ -31,7 +31,14 @@ func (h *Handler) refreshTokens(w http.ResponseWriter, r *http.Request) {
 		w.Write(resp)
 		return
 	}
-	w.Header().Add("Set-Cookie", fmt.Sprintf("refresh-token='%s'; HttpOnly", rToken))
+	cookie := &http.Cookie{
+		Name:     "refresh-token",
+		Value:    fmt.Sprintf("'%s'", rToken),
+		Path:     "/",
+		HttpOnly: true,
+	}
+	http.SetCookie(w, cookie)
+
 	w.Header().Add("Content-Type", "application/json")
 	w.Write(resp)
 }
@@ -71,7 +78,14 @@ func (h *Handler) signIn(w http.ResponseWriter, r *http.Request) {
 		w.Write(resp)
 		return
 	}
-	w.Header().Add("Set-Cookie", fmt.Sprintf("refresh-token='%s'; HttpOnly", rToken))
+	cookie := &http.Cookie{
+		Name:     "refresh-token",
+		Value:    fmt.Sprintf("'%s'", rToken),
+		Path:     "/",
+		HttpOnly: true,
+	}
+	http.SetCookie(w, cookie)
+
 	w.Header().Add("Content-Type", "application/json")
 	w.Write(resp)
 

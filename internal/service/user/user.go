@@ -24,6 +24,7 @@ type TokenRepo interface {
 	GetToken(ctx context.Context, token string) (domainT.RefreshToken, error)
 	CreateToken(ctx context.Context, token domainT.RefreshToken) error
 	GetUserIdByToken(ctx context.Context, token string) (int, error)
+	DeleteTokenByUserId(ctx context.Context, userId int) error
 }
 type UserRepo interface {
 	GetUser(ctx context.Context, password, userName string) (domainU.User, error)
@@ -61,6 +62,7 @@ func (sU *ServiceUser) CraeteArticlesByToken(ctx context.Context, rToken string,
 	}
 	userId, err := sU.TRepo.GetUserIdByToken(ctx, rToken)
 	if err != nil {
+
 		return err
 	}
 	name, err := sU.URepo.GetUserNameById(ctx, userId)
@@ -122,7 +124,10 @@ func (sU *ServiceUser) generateTokens(ctx context.Context, userId int) (string, 
 	if err != nil {
 		return "", "", err
 	}
-
+	err = sU.TRepo.DeleteTokenByUserId(ctx, userId)
+	if err != nil {
+		return "", "", err
+	}
 	if err := sU.TRepo.CreateToken(ctx, domainT.RefreshToken{
 		UserID:    userId,
 		Token:     refreshToken,
